@@ -6,7 +6,8 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.anti-forgery]
             [ring.util.response :as resp]
-            [contador.db :as db])
+            [contador.db :as db]
+            [contador.contador-handler :as handler])
   (:gen-class))
 
 (defroutes app-routes
@@ -20,32 +21,12 @@
     (-> (slurp "resources/public/index.html")
         (resp/response)
         (resp/content-type "text/html")))
-  
+
   (POST "/api/contador" [action valor]
-    (case action
-      "incrementa" (try
-                     (let [valor-atual (db/get-valor)]
-                       (db/insere-valor (inc valor-atual)))
-                     (catch Exception _
-                       (throw (ex-info "Valor inválido" {:valor (db/get-valor)}))))
-      "zera" (try
-               (db/insere-valor 0)
-               (catch Exception _
-                 (throw (ex-info "Valor inválido" {:valor 0}))))
-      "insere" (try
-                 (let [n (Integer/parseInt valor)]
-                   (db/insere-valor n))
-                 (catch Exception _
-                   (throw (ex-info "Valor inválido para inserção" {:valor valor}))))
-      (throw (ex-info "Ação inválida" {:acao action})))
-    (-> (json/generate-string {:valor (db/get-valor)})
-        (resp/response)
-        (resp/content-type "application/json")))
-  
+    (handler/handle-post-contador action valor))
+
   (GET "/api/contador" []
-    (-> (json/generate-string {:valor (db/get-valor)})
-        (resp/response)
-        (resp/content-type "application/json")))
+    (handler/handle-get-contador))
 
   (route/resources "/")
   (route/not-found "Página não encontrada"))
