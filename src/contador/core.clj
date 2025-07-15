@@ -34,7 +34,11 @@
 (def app
   (wrap-defaults app-routes site-defaults))
 
-(defonce conn (delay db/conn))
+(def app-sem-token
+  (-> app-routes
+      (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))))
+
+(defonce conn db/conn)
 
 (defn -main []
   (println "Abrindo conexao com o datomic...")

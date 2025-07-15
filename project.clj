@@ -7,7 +7,8 @@
                  [ring "1.9.6"]
                  [cheshire "5.11.0"]
                  [ring/ring-defaults "0.3.4"]
-                 [com.datomic/peer "1.0.7075"]]
+                 [com.datomic/peer "1.0.7075"]
+                 [ring/ring-mock "0.6.1"]]
 
   :plugins [[lein-cljsbuild "1.1.8"]]
   :source-paths ["src"]

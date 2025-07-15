@@ -16,7 +16,7 @@
     :db/doc         "Valor do contador"}])
 
 ;; conexao
-(def conn (d/connect uri))
+(def conn (delay (d/connect uri)))
 
 (defn atributo-existe? [db ident]
   (boolean
